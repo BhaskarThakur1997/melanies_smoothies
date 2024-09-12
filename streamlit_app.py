@@ -13,9 +13,22 @@ st.write(
     """
 )
 
+from snowflake.snowpark import Session
+
+# Snowflake connection parameters
+connection_parameters = {
+    "account": "PNUBUJU.MMB26698",
+    "user": "thakurbhaskar",
+    "password": "Skrillex1@",
+    "role": "SYSADMIN",
+    "warehouse": "COMPUTE_WH",
+    "database": "SMOOTHIES",
+    "schema": "PUBLIC"
+}
+# Create Snowflake session
+session = Session.builder.configs(connection_parameters).create()
 
 
-session = get_active_session()
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
 #st.dataframe(data=my_dataframe, use_container_width=True)
 
@@ -55,3 +68,18 @@ if ingredients_list:
         fv_df = st.dataframe(data = fruityvice_response.json(), use_container_width=True)
 
                     
+# Example data setup
+fruits = ["Apple", "Banana", "Cherry", "Date", "Elderberry"]
+ingredients_list = st.multiselect(
+    'Choose up to 5 ingredients:',
+    fruits
+)
+
+if ingredients_list:
+    ingredients_string = ', '.join(ingredients_list)
+    st.write("Selected ingredients: ", ingredients_string)
+
+    for fruit_chosen in ingredients_list:
+        st.subheader(fruit_chosen + ' Nutrition Information')
+        fruit_data = requests.get(f"https://fruityvice.com/api/fruit/{fruit_chosen}").json()
+        st.json(fruit_data)
