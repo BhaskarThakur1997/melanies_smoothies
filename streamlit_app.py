@@ -13,6 +13,26 @@ st.write(
     """
 )
 
+from snowflake.snowpark import Session
+
+# Initialize Snowflake session
+def create_session():
+    connection_params = {
+        "account": "PNUBUJU.MMB26698",
+        "user": "thakurbhaskar",
+        "password": "Skrillex1@",
+        "role": "SYSADMIN",
+        "warehouse": "COMPUTE_WH",
+        "database": "SMOOTHIES",
+        "schema": "PUBLIC"
+    }
+    return Session.builder.configs(connection_params).create()
+
+# Create session
+session = create_session()
+
+# Use session to query table
+my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
 
 session = get_active_session()
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
