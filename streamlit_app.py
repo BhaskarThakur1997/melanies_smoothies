@@ -41,7 +41,7 @@ if ingredients_list:
         st.success('Your Smoothie is ordered!', icon="✅")
 
     cnx = st.connection("snowflake")
-                    session = cnx.session()
+          session = cnx.session()
 
 import requests
 fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
