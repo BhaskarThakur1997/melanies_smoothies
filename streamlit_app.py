@@ -1,10 +1,10 @@
 # Import python packages
 import streamlit as st
+from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
 
-
 # Write directly to the app
-st.title("My Parents New Healthy Dinner")
+st.title("Example Streamlit App :balloon:")
 st.write(
     """Replace this example with your own code!
     **And if you're new to Streamlit,** check
@@ -13,28 +13,11 @@ st.write(
     """
 )
 
-from snowflake.snowpark import Session
 
-# Initialize Snowflake session
-def create_session():
-    connection_params = {
-        "account": "PNUBUJU.MMB26698",
-        "user": "thakurbhaskar",
-        "password": "Skrillex1@",
-        "role": "SYSADMIN",
-        "warehouse": "COMPUTE_WH",
-        "database": "SMOOTHIES",
-        "schema": "PUBLIC"
-    }
-    return Session.builder.configs(connection_params).create()
 
-# Create session
-session = create_session()
-
-# Use session to query table
+session = get_active_session()
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
-
-
+#st.dataframe(data=my_dataframe, use_container_width=True)
 
 ingredients_list = st.multiselect( 
 'Choose up to 5 ingredients:' 
@@ -49,15 +32,10 @@ if ingredients_list:
    # st.write(ingredients_string)
     
     my_insert_stmt = """ insert into smoothies.public.orders(ingredients) 
-            values ('""" + ingredients_string + """')"""
+            values ('""" + ingredients_string + """','"""+name_on_order+"""')"""
     
-    #st.write(my_insert_stmt)
-
-    time_to_insert = st.button('Submit Order')
-    if time_to_insert:
-        session.sql(my_insert_stmt).collect()
-        st.success('Your Smoothie is ordered!', icon="✅")
-
+    st.write(my_insert_stmt)
+    st.stop()
     cnx = st.connection("snowflake")
     session = cnx.session()  # Remove extra spaces
 
